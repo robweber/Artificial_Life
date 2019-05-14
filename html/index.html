@@ -16,6 +16,7 @@
   <!-- Bootstrap core JavaScript -->
   <script src="js/jquery-3.4.1.min.js"></script>
   <script src="js/boostrap.4.3.1.bundle.min.js"></script>
+  <script src="js/custom.js"></script>
   
   <!-- webiopi -->
   <script type="text/javascript" src="/webiopi.js"></script>
@@ -24,19 +25,16 @@
     var is_running = true;
     
     $(function(){
-    	updateRunning(false)
+    	updateRunning(true)
     });
 
     function updateRunning(startRunning)
     {
       is_running = startRunning
 
+      updateProgramStatus(is_running);
       if(is_running)
-      {
-        $('#is_running').html('Running');
-	$('#is_running').removeClass('text-danger');
-        $('#is_running').addClass('text-success');
-        
+      { 
         //change start to stop
         $('#action_button').val("Stop")
         $('#action_button').removeClass('btn-primary')
@@ -44,12 +42,8 @@
       }
       else
       {
-        $('#is_running').html('Not Running');
-	$('#is_running').removeClass('text-success');
-        $('#is_running').addClass('text-danger');
-
-	//change to start
-	$('#action_button').val("Start")
+        //change to start
+        $('#action_button').val("Start")
         $('#action_button').addClass('btn-primary')
         $('#action_button').removeClass('btn-danger')
 
@@ -72,7 +66,7 @@
       }
       else
       {
-	updateRunning(true)
+          updateRunning(true)
       }
     }
 
