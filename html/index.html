@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+  
 <head>
 
   <meta charset="utf-8">
@@ -21,29 +21,61 @@
   <script type="text/javascript" src="/webiopi.js"></script>
   
   <script type="text/javascript">
-    var is_running = false;
+    var is_running = true;
     
     $(function(){
+    	updateRunning(false)
+    });
+
+    function updateRunning(startRunning)
+    {
+      is_running = startRunning
+
       if(is_running)
       {
         $('#is_running').html('Running');
+	$('#is_running').removeClass('text-danger');
         $('#is_running').addClass('text-success');
         
-        //disable the start button when running
-        $('#start_button').prop('disabled', true);
+        //change start to stop
+        $('#action_button').val("Stop")
+        $('#action_button').removeClass('btn-primary')
+        $('#action_button').addClass('btn-danger')
       }
       else
       {
         $('#is_running').html('Not Running');
+	$('#is_running').removeClass('text-success');
         $('#is_running').addClass('text-danger');
 
+	//change to start
+	$('#action_button').val("Start")
+        $('#action_button').addClass('btn-primary')
+        $('#action_button').removeClass('btn-danger')
+
       }
-    });
+
+    }
     
     function saveForm(){
       $('#alert_area').html('Settings Applied')
       $('#alert_area').show()
     }
+
+    function runAction(){
+      if(is_running)
+      {
+        if(confirm('Are you sure, this will stop Artificial Life from running?'))
+        {
+          updateRunning(false)
+        }
+      }
+      else
+      {
+	updateRunning(true)
+      }
+    }
+
   </script>
 </head>
 
@@ -76,6 +108,11 @@
       <div class="row">
         <div class="col-lg-12 text-right"><h5 class="mt-5">Program is <span class="" id="is_running"></span></h5></div>
       </div>
+      <div class="row m-4">
+        <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary p-4" id="action_button" onClick="runAction()" value="Start" /></div>
+      </div>
+    </div>      
+    <div class="container">
       <div class="row mt-4">
         <div class="col-md-4 lead">Lifeforms At Start</div>
         <div class="col-md-4"><input type="text" value="1" class="form-control" id="lifeforms_at_start" /></div>
@@ -101,11 +138,10 @@
         <div class="col-md-4"><input type="text" value="1" class="form-control" id="max_aggression" /></div>
         <div class="col-md-4">maximum aggression for any life form</div>
       </div>
-      <div class="row mt-4">
-        <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary" onClick="saveForm()" value="Apply" /> <input type="button" class="btn btn-primary" id="start_button" value="Start" /></div>
+      <div class="row mt-4 mb-4">
+        <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary" onClick="saveForm()" value="Apply" /></div>
       </div>
-    </div>
-    
+    </div>  
   </main>
 </body>
 
