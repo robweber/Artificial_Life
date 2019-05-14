@@ -33,6 +33,7 @@
       is_running = startRunning
 
       updateProgramStatus(is_running);
+      
       if(is_running)
       { 
         //change start to stop
@@ -50,11 +51,6 @@
       }
 
     }
-    
-    function saveForm(){
-      $('#alert_area').html('Settings Applied')
-      $('#alert_area').fadeIn(300).delay(1500).fadeOut(400)
-    }
 
     function runAction(){
       if(is_running)
@@ -71,6 +67,7 @@
     }
 
   </script>
+  
 </head>
 
 <body>
@@ -88,6 +85,9 @@
             <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="settings.html">Settings</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="about.html">About</a>
           </li>
         </ul>
@@ -103,39 +103,12 @@
         <div class="col-lg-12 text-right"><h5 class="mt-5">Program is <span class="" id="is_running"></span></h5></div>
       </div>
       <div class="row m-4">
-        <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary p-4" id="action_button" onClick="runAction()" value="Start" /></div>
+        <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary py-4 px-5" id="action_button" onClick="runAction()" value="Start" /></div>
       </div>
-    </div>      
-    <div class="container">
-      <div class="row mt-4">
-        <div class="col-md-4 lead">Lifeforms At Start</div>
-        <div class="col-md-4"><input type="text" value="1" class="form-control" id="lifeforms_at_start" /></div>
-        <div class="col-md-4">number of lifeforms at the start of the program</div>
+      <div class="row m-3">
+        <div class="col-lg-12 border border-secondary py-2" id="program_output" style="height:200px;">This is where some output from the program will go - maybe</div>
       </div>
-      <div class="row mt-4">
-        <div class="col-md-4 lead">Seconds Between Loops</div>
-        <div class="col-md-4"><input type="text" value="1" class="form-control" id="seconds_between_loops" /></div>
-        <div class="col-md-4">the number of seconds between loops (more seconds, slower movement)</div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-4 lead">Max Lifeforms</div>
-        <div class="col-md-4"><input type="text" value="1" class="form-control" id="max_lifeforms" /></div>
-        <div class="col-md-4">maximum number of lifeforms at any given time</div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-4 lead">Max TTL</div>
-        <div class="col-md-4"><input type="text" value="1" class="form-control" id="max_ttl" /></div>
-        <div class="col-md-4">maximum time to live for any individual life form, expressed in loops</div>
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-4 lead">Max Agression</div>
-        <div class="col-md-4"><input type="text" value="1" class="form-control" id="max_aggression" /></div>
-        <div class="col-md-4">maximum aggression for any life form</div>
-      </div>
-      <div class="row mt-4 mb-4">
-        <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary" onClick="saveForm()" value="Apply" /></div>
-      </div>
-    </div>  
+    </div>       
   </main>
 </body>
 

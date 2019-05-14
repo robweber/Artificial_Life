@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Artificial Life</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.4.3.1.min.css" rel="stylesheet">
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/boostrap.4.3.1.bundle.min.js"></script>
+  <script src="js/custom.js"></script>
+  
+  <!-- webiopi -->
+  <script type="text/javascript" src="/webiopi.js"></script>
+  
+  <script type="text/javascript">
+    
+    $(function(){
+    	updateProgramStatus(true)
+    });
+    
+    function saveForm(){
+      $('#alert_area').html('Settings Applied')
+      $('#alert_area').fadeIn(300).delay(1500).fadeOut(400)
+    }
+
+  </script>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Artificial Life</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="settings.html">Settings <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <main role="main">
+    <p id="alert_area" class="alert alert-success text-center" style="display:none"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 text-right"><h5 class="mt-5">Program is <span class="" id="is_running"></span></h5></div>
+      </div>
+    </div>      
+    <div class="container">
+      <div class="row mt-4">
+        <div class="col-md-4 lead">Lifeforms At Start</div>
+        <div class="col-md-4"><input type="text" value="1" class="form-control" id="lifeforms_at_start" /></div>
+        <div class="col-md-4">number of lifeforms at the start of the program</div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4 lead">Seconds Between Loops</div>
+        <div class="col-md-4"><input type="text" value="1" class="form-control" id="seconds_between_loops" /></div>
+        <div class="col-md-4">the number of seconds between loops (more seconds, slower movement)</div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4 lead">Max Lifeforms</div>
+        <div class="col-md-4"><input type="text" value="1" class="form-control" id="max_lifeforms" /></div>
+        <div class="col-md-4">maximum number of lifeforms at any given time</div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4 lead">Max TTL</div>
+        <div class="col-md-4"><input type="text" value="1" class="form-control" id="max_ttl" /></div>
+        <div class="col-md-4">maximum time to live for any individual life form, expressed in loops</div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4 lead">Max Agression</div>
+        <div class="col-md-4"><input type="text" value="1" class="form-control" id="max_aggression" /></div>
+        <div class="col-md-4">maximum aggression for any life form</div>
+      </div>
+      <div class="row mt-4 mb-4">
+        <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary" onClick="saveForm()" value="Apply" /></div>
+      </div>
+    </div>  
+  </main>
+</body>
+
+</html>
