@@ -45,6 +45,9 @@ https://github.com/robweber/Artificial_Life.git
 cd Artificial_Life
 git checkout webiopi
 
+#install dependencies
+sudo pip install -r requirements.txt
+
 #copy config file
 sudo cp webiopi.config /etc/webiopi/config
 
@@ -53,6 +56,7 @@ sudo webiopi-passwd
 
 #restart the services
 sudo systemctl restart webiopi
+
 ```
 
 3. WebIOPi should now be running on http://IP:8000
