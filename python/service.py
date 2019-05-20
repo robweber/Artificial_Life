@@ -1,8 +1,9 @@
 import webiopi
 import json
+import sys
 
 #do this to import local modules
-module_path = '/home/pi/Git/betabrite-sign/python'
+module_path = '/home/pi/Artificial_Life/python'
 if module_path not in sys.path:
    sys.path.append(module_path)
 
