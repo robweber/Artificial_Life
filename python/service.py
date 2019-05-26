@@ -46,21 +46,20 @@ def checkRunning():
 
     return json.dumps({"is_running":is_running})
 
-#puts the program in running mode
+#changes program running status
 @webiopi.macro
-def startProgram():
+def changeRunning(action):
     global is_running
-    is_running = True
+    is_running = (True if action == 'true' else False)
+    webiopi.info(action)
+    response = {'message':'','is_running':is_running}
 
-    return json.dumps({"message":"Starting Artificial Life"})
+    if(action):
+        response['message'] = 'Starting Artificial Life'
+    else:
+        response['message'] = 'Stopping Artificial Life'
 
-#stops the program, if currently running
-@webiopi.macro
-def stopProgram():
-    global is_running
-    is_running = False
-
-    return json.dumps({"message":"Stopping Artificial Life"})
+    return json.dumps(response)
 
 #### WEB MACROS END HERE
 

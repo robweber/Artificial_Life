@@ -1,6 +1,8 @@
 //update on the ui if the program is running
-function updateProgramStatus(isRunning){
-  if(isRunning){
+function updateProgramStatus(macro,args,response){
+  json = jQuery.parseJSON(response)
+
+  if(json['is_running']){
     
     $('#is_running').html('Running');
     $('#is_running').removeClass('text-danger');

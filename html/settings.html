@@ -35,7 +35,7 @@
       }
      
       webiopi().callMacro('getSettings',[],loadSettings);
-      updateProgramStatus(true)
+      webiopi().callMacro('checkRunning',[],updateProgramStatus);
     });
 
     function showNotification(macro,args,response){

@@ -23,16 +23,18 @@
   
   <script type="text/javascript">
     var is_running = true;
-    
-    $(function(){
-    	updateRunning(true)
-    });
 
-    function updateRunning(startRunning)
+    webiopi().ready(function(){
+        webiopi().callMacro('checkRunning',[],updateRunning)
+    })
+
+    function updateRunning(macro,args,response)
     {
-      is_running = startRunning
+      json = jQuery.parseJSON(response)
 
-      updateProgramStatus(is_running);
+      is_running = json['is_running']
+
+      updateProgramStatus(macro,args,response);
       
       if(is_running)
       { 
@@ -57,12 +59,12 @@
       {
         if(confirm('Are you sure, this will stop Artificial Life from running?'))
         {
-          updateRunning(false)
+          webiopi().callMacro('changeRunning',false,updateRunning)
         }
       }
       else
       {
-          updateRunning(true)
+          webiopi().callMacro('changeRunning',true,updateRunning)
       }
     }
 
