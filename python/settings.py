@@ -7,14 +7,14 @@ class Settings:
     jsonFile = None
 	
     def __init__(self,filePath,fileName='settings'):
-	self.jsonFile = filePath + 'data/' + fileName + '.json'
-		
-	#check the settings file exists
-	if(not os.path.isfile(self.jsonFile)):
-		#copy the default
-		copyfile(filePath + 'data/' + fileName + '_default.json',self.jsonFile)
-		
-        self._loadJSON()
+      self.jsonFile = filePath + 'data/' + fileName + '.json'
+
+	    #check the settings file exists
+      if(not os.path.isfile(self.jsonFile)):
+	      #copy the default
+        copyfile(filePath + 'data/' + fileName + '_default.json',self.jsonFile)
+
+      self._loadJSON()
 
     def getAllValues(self):
         return self.jsonObject
@@ -24,11 +24,10 @@ class Settings:
 
     def setValue(self,key,value):
         self.jsonObject[key] = self._isInt(value)
-		
-	self._writeJSON()
+        self._writeJSON()
 
     #check if value is int
-    def _isInt(value):
+    def _isInt(self,value):
         try:
             result = int(value)
             return result

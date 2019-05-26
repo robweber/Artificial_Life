@@ -22,14 +22,36 @@
   <script type="text/javascript" src="/webiopi.js"></script>
   
   <script type="text/javascript">
-    
-    $(function(){
-    	updateProgramStatus(true)
+    formInputs = ['num_lifeforms_at_start','seconds_between_loops','max_lifeforms','max_ttl','max_aggression']
+    webiopi().ready(function(){
+      var loadSettings = function(macro,args,response){
+          json = jQuery.parseJSON(response)
+          
+          //fill in the form inputs
+          formInputs.forEach(function(element){
+            $('#' + element).val(json[element]);
+          });
+
+      }
+     
+      webiopi().callMacro('getSettings',[],loadSettings);
+      updateProgramStatus(true)
     });
-    
+
+    function showNotification(macro,args,response){
+      json = jQuery.parseJSON(response)
+      $('#alert_area').html(json.message);
+      $('#alert_area').fadeIn(300).delay(1500).fadeOut(400);
+    }
+
     function saveForm(){
-      $('#alert_area').html('Settings Applied')
-      $('#alert_area').fadeIn(300).delay(1500).fadeOut(400)
+      //get the settings
+      settings = []
+      formInputs.forEach(function(element){
+         settings.push($('#' + element).val());
+      });
+
+      webiopi().callMacro('saveSettings',settings,showNotification)
     }
 
   </script>
@@ -71,7 +93,7 @@
     <div class="container">
       <div class="row mt-4">
         <div class="col-md-4 lead">Lifeforms At Start</div>
-        <div class="col-md-4"><input type="text" value="1" class="form-control" id="lifeforms_at_start" /></div>
+        <div class="col-md-4"><input type="text" value="1" class="form-control" id="num_lifeforms_at_start" /></div>
         <div class="col-md-4">number of lifeforms at the start of the program</div>
       </div>
       <div class="row mt-4">

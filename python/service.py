@@ -21,7 +21,7 @@ settings = None
 @webiopi.macro
 def saveSettings(numStart,timeDelay,maxNum,maxTTL,maxAgression):
     global settings
-    webiopi.info('saving')
+    webiopi.info('saving settings')
 
     #save the settings
     settings.setValue(constants.NUM_LIFEFORMS_START,numStart)
@@ -69,7 +69,7 @@ def setup():
     global settings
 
     #load the settings file
-    settings = Settings('/home/pi/Git/Artificial_Life')
+    settings = Settings('/home/pi/Artificial_Life/')
     
     webiopi.info('setup complete')
 
