@@ -76,7 +76,22 @@ def changeRunning(action):
 @webiopi.macro
 def getLogs():
     global logArray
-    return json.dumps(logArray)
+    global iList
+    global holder
+
+    result = {}
+
+    #if running add the life forms to the result
+    if(is_running):
+        life = []
+        for Id in iList:
+            life.append({'id':Id,'red':holder[Id].redColor,'green':holder[Id].greenColor,'blue':holder[Id].blueColor,'ttl':holder[Id].timeToLive,'aggression':holder[Id].aggressionFactor})
+        result['life'] = life
+    else:
+        result['life'] = []
+
+    result['logs'] = logArray
+    return json.dumps(result)
 
 #### WEB MACROS END HERE
 
