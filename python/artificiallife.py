@@ -17,22 +17,22 @@ class lifeForm(object):
         self.lifeSeed = seed
         self.lifeSeed2 = seed2
         self.lifeSeed3 = seed3
-        #lifeseed 1 controls the random number generation for the red colour, maximum aggression factor starting direction and maximum possible lifespan
+        #lifeseed 1 controls the random number generation for the green colour, maximum aggression factor starting direction and maximum possible lifespan
         random.seed(self.lifeSeed)
-        self.redColor = random.randint(1, 255)
+        self.greenColor = random.randint(1, 255)
         self.maxAggressionFactor = random.randint(1, self.globalAggression)
         self.direction = random.randint(1, 9)
         self.maxLife = random.randint(1, self.globalTTL)
-        #lifeseed 2 controls the random number generation for the green colour, aggression factor between 0 and the maximum from above as well as the time the entity takes to change direction
+        #lifeseed 2 controls the random number generation for the red colour, aggression factor between 0 and the maximum from above as well as the time the entity takes to change direction
         random.seed(self.lifeSeed2)
-        self.greenColor = random.randint(1, 255)
         self.aggressionFactor = random.randint(0, self.maxAggressionFactor)   
+        self.redColor = int((float(self.aggressionFactor) / float(self.globalAggression)) * 255) #color is a function of how aggressive the entity is as a percentage of total reddness (ie, more aggressive is more red)
         self.timeToMove = random.randint(1, 25)
         self.timeToMoveCount = self.timeToMove
-        #lifeseed 3 controls the random number generation for the green colour, and time to live between 0 and the maximum from above
+        #lifeseed 3 controls the random number generation for the blue colour, and time to live between 0 and the maximum from above
         random.seed(self.lifeSeed3)
-        self.blueColor = random.randint(1, 255)
         self.timeToLive = random.randint(0, self.maxLife)
+        self.blueColor = int((float(self.timeToLive) / float(self.globalTTL)) * 255) #color is a function of total lifespan as a percentage of max lifespan (ie, longer life is bluer color)
         self.timeToLiveCount = self.timeToLive
         #reset the global random seed
         random.seed()
