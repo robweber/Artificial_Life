@@ -212,6 +212,118 @@ def loop():
                 drawLEDS(posX, posY, colR, colG, colB)
                 #append the lifeforms id and x and y location to to the position list to be used by the collisiondetector
                 posList.append([Id, posX, posY])
+                #check for any collisions with any other entities and return the id of an entity collided with if so
+                colliderScope = collisionDetector(posList, posX, posY, Id)
+                #get the count of total lifeforms currently active
+                lifeFormTotalCount = len(iList)
+
+                #if there has been a collision with another entity it will attempt to interact with the other entity
+                if colliderScope:
+                    #list variable for use later is cleared
+                    transfers = []
+                    #print information of the collision to screen
+                    print ('Collision detected: ' + str(Id) + ' collided with ' + str(colliderScope))
+                    #call the randomise direction function for the entity
+                    holder[Id].randomiseDirection()
+
+                    #if the aggression factor is below 850 the lifeform will attempt to breed with the one it collided with
+                    if holder[Id].aggressionFactor < 850:
+                        webiopi.info('breeding')
+
+                        #the breeding will attempt only if the current lifeform count is not above the population limit
+                        if lifeFormTotalCount < popLimit:
+                            #generate 2 random numbers for x and y positions of the new entity
+                            posXGen, posYGen = boardPositionGenerator()
+                            #posXGen = random.randint(1, 8)
+                            #posYGen = random.randint(1, 8)
+              
+                            #check for an entity at this position
+                            for i in posList:
+                                colliderScopeBirthConflicter = collisionDetector(posList, posXGen, posYGen, Id)     
+                                if colliderScopeBirthConflicter:
+                                    posXGen, posYGen = boardPositionGenerator()
+                                    #posXGen = random.randint(1, 8)
+                                    #posYGen = random.randint(1, 8)
+                  
+                                    #if the aggression factor is too low for the entity collided with and there is an entity at the current location its offspring wants to spawn, it will not do anything and no new entity will spawn
+                                    if holder[colliderScope].aggressionFactor < 250:
+                                        #print infromation and continue to next iteration of the loop
+                                        print 'Nothing killed'
+                                        continue
+                  
+                                    #if the aggression factor is higher than the entity currently in place, the currently existing entity will be killed and replaced with the new offspring
+                                    elif holder[colliderScope].aggressionFactor > holder[colliderScopeBirthConflicter].aggressionFactor:
+                                        #call the kill entity function for the entity blocking the offspring
+                                        iList = holder[colliderScopeBirthConflicter].killEntity(iList)
+                                        #remove the killed entity from the position list so that it cant be collided with on the next iteration
+                                        posList.remove([colliderScopeBirthConflicter, holder[colliderScopeBirthConflicter].matrixPositionX, holder[colliderScopeBirthConflicter].matrixPositionY])
+                                        #increase lifeform total by 1
+                                        lifeFormTotal += 1
+                                        #append the lifeform total to the list used by the main loop
+                                        iList.append(lifeFormTotal)
+                                        #create a dictionary containing the instance id of the new class instance for the lifeform
+                                        hUpdate = {lifeFormTotal: lifeForm(lifeFormTotal,maxAggro,maxTTL)}
+                                        #update the list containing all of the instance ids of the main entity class
+                                        holder.update(hUpdate)
+                    
+                                        #the below assigns all 3 lifeseeds with the potential to take the lifeseed from either parent (40% chance each), or whether a new random lifeseed will be inserted (20% chance), resulting in some genetic chaos to change offspring randomly
+                                        transferOptions1 = [holder[Id].lifeSeed, holder[colliderScope].lifeSeed, genRandom()]
+                                        transferOptions2 = [holder[Id].lifeSeed2, holder[colliderScope].lifeSeed2, genRandom()]
+                                        transferOptions3 = [holder[Id].lifeSeed3, holder[colliderScope].lifeSeed3, genRandom()]
+                    
+                                        #print information to the console
+                                        print 'Conflicter killed'
+                    
+                                        #generate new lifeform with the chances of taking the information from each lifeseed or a totally new random seed, creating them at the x and y coords determined above
+                                        generateLifeformAttribsSpark(lifeFormTotal, int(np.random.choice(transferOptions1, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions2, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions3, 1, p=[0.4, 0.4, 0.2])), posXGen, posYGen)
+                                        #break the loop as no more needs to be done
+                                        break
+                  
+                                    #if the aggression factor of the already existing entity is higher then the current entity will be killed and no offspring produced
+                                    elif holder[colliderScope].aggressionFactor < holder[colliderScopeBirthConflicter].aggressionFactor:
+                                        print 'Collider killed'
+                                        iList = holder[colliderScope].killEntity(iList)
+                                        posList.remove([colliderScope, holder[colliderScope].matrixPositionX, holder[colliderScope].matrixPositionY])
+                                        #break the loop as no more needs to be done
+                                        break
+                
+                                #if there is no entity in the place of the potential offspring the new entity will be created at the x and y coords determined above
+                                else:
+                                    #increas the lifeform total by 1
+                                    lifeFormTotal += 1
+                                    iList.append(lifeFormTotal)
+                                    hUpdate = {lifeFormTotal: lifeForm(lifeFormTotal,maxAggro,maxTTL)}
+                                    holder.update(hUpdate)
+              
+                                    #the below assigns all 3 lifeseeds with the potential to take the lifeseed from either parent (40% chance each), or whether a new random lifeseed will be inserted (20% chance), resulting in some genetic chaos to change offspring randomly
+                                    transferOptions1 = [holder[Id].lifeSeed, holder[colliderScope].lifeSeed, genRandom()]
+                                    transferOptions2 = [holder[Id].lifeSeed2, holder[colliderScope].lifeSeed2, genRandom()]
+                                    transferOptions3 = [holder[Id].lifeSeed3, holder[colliderScope].lifeSeed3, genRandom()]
+                  
+                                    #generate new lifeform with the chances of taking the information from each lifeseed or a totally new random seed, creating them at the x and y coords determined above
+                                    generateLifeformAttribsSpark(lifeFormTotal, int(np.random.choice(transferOptions1, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions2, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions3, 1, p=[0.4, 0.4, 0.2])), posXGen, posYGen)
+                                    break
+            
+                        #if the current amount of lifeforms on the board is at the population limit or above then do nothing
+                        elif lifeFormTotalCount >= popLimit:
+                            continue
+
+                    #if the entities aggression factor is above 850 it will attempt to kill the entity it has collided with instead of breed
+                    elif holder[Id].aggressionFactor > 850:
+                        #if the other entities aggression factor is lower it will be killed and removed from the main loops list of entities
+                        if holder[colliderScope].aggressionFactor < holder[Id].aggressionFactor:
+                            print ('Other entity killed')
+                            iList = holder[colliderScope].killEntity(iList)
+                            posList.remove([colliderScope, holder[colliderScope].matrixPositionX, holder[colliderScope].matrixPositionY])
+                        #if the other entities aggression factor is higher it will be kill the current entity and it will be removed from the main loops list of entities
+                        elif holder[colliderScope].aggressionFactor > holder[Id].aggressionFactor:
+                            print ('Current entity killed')
+                            iList = holder[Id].killEntity(iList)
+                            posList.remove([Id, holder[Id].matrixPositionX, holder[Id].matrixPositionY])
+                        #if the aggression factor of both entities is identical they will reach a stalemate and simply bounce off each other
+                        elif holder[colliderScope].aggressionFactor == holder[Id].aggressionFactor:
+                            print ('Neither entity killed')
+                            continue
         elif not iList:
             webiopi.info('Program done')
             changeRunning('false')

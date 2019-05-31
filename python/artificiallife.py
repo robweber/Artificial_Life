@@ -61,37 +61,37 @@ class lifeForm(object):
         if self.direction == 1:
             if self.matrixPositionX < 7:
                 self.matrixPositionX += 1
-        else:
-            self.direction = self.randomiseDirection()
+            else:
+                self.direction = self.randomiseDirection()
     
         #if the edge of the board is not hit and direction is '2' then move the entity down the X axis by 1, if it has hit the edge of the board its direction is randomised by the randomisedirection function being called for the entity   
         if self.direction == 2:
             if self.matrixPositionX > 0:
                 self.matrixPositionX -= 1
-        else:
-            self.direction = self.randomiseDirection()
+            else:
+                self.direction = self.randomiseDirection()
         
         #if the edge of the board is not hit and direction is '3' then move the entity up the Y axis by 1, if it has hit the edge of the board its direction is randomised by the randomisedirection function being called for the entity   
         if self.direction == 3:
             if self.matrixPositionY < 7:
                 self.matrixPositionY += 1
-        else:
-            self.direction = self.randomiseDirection()
+            else:
+                self.direction = self.randomiseDirection()
     
         #if the edge of the board is not hit and direction is '4' then move the entity down the Y axis by 1, if it has hit the edge of the board its direction is randomised by the randomisedirection function being called for the entity   
         if self.direction == 4:
             if self.matrixPositionY > 0:
                 self.matrixPositionY -= 1
-        else:
-            self.direction = self.randomiseDirection()
+            else:
+                self.direction = self.randomiseDirection()
 
         #if the edge of the board is not hit and direction is '5' then move the entity up the X and Y axis by 1, if it has hit the edge of the board its direction is randomised by the randomisedirection function being called for the entity
         if self.direction == 5:
             if self.matrixPositionX < 7 and self.matrixPositionY < 0:
                 self.matrixPositionX += 1
                 self.matrixPositionY += 1
-        else:
-            self.direction = self.randomiseDirection()
+            else:
+                self.direction = self.randomiseDirection()
 
         #if the edge of the board is not hit and direction is '6' then move the entity down the X and Y axis by 1, if it has hit the edge of the board its direction is randomised by the randomisedirection function being called for the entity       
         if self.direction == 6:
