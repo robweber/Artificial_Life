@@ -52,6 +52,10 @@
 
       }
 
+      //$('#program_output').val($('#program_output').val() + 'Updated \n');
+
+      setTimeout(function() {webiopi().callMacro('checkRunning',[],updateRunning)},5000)
+
     }
 
     function runAction(){
@@ -108,7 +112,7 @@
         <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary py-4 px-5" id="action_button" onClick="runAction()" value="Start" /></div>
       </div>
       <div class="row m-3">
-        <div class="col-lg-12 border border-secondary py-2" id="program_output" style="height:200px;">This is where some output from the program will go - maybe</div>
+        <textarea class="col-lg-12 border border-secondary py-2 form-control" rows="12" readonly id="program_output" >This is where some output from the program will go - maybe</textarea>
       </div>
     </div>       
   </main>
