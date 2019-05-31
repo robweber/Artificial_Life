@@ -178,7 +178,6 @@ def loop():
     global holder
 
     if(is_running):
-        webiopi.info("program is running")
 
         #get the settings from the settings class
         lifeFormTotal = settings.getValue(constants.NUM_LIFEFORMS_START)
@@ -332,6 +331,6 @@ def loop():
         #sleep for the value set by the user
         webiopi.sleep(settings.getValue(constants.SECONDS_BETWEEN_LOOPS))
     else:
-        webiopi.info("program is not running")
+        #sleep for a bit and check again
         webiopi.sleep(5)
 
