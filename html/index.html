@@ -25,7 +25,8 @@
     var is_running = true;
 
     webiopi().ready(function(){
-        webiopi().callMacro('checkRunning',[],updateRunning)
+        webiopi().callMacro('checkRunning',[],updateRunning);
+        webiopi().callMacro('getLogs',[],updateLog);
     })
 
     function updateRunning(macro,args,response)
@@ -52,8 +53,6 @@
 
       }
 
-      //$('#program_output').val($('#program_output').val() + 'Updated \n');
-
       setTimeout(function() {webiopi().callMacro('checkRunning',[],updateRunning)},5000)
 
     }
@@ -70,6 +69,23 @@
       {
           webiopi().callMacro('changeRunning',true,updateRunning)
       }
+    }
+
+    function updateLog(macro,args,response){
+        json = jQuery.parseJSON(response);
+
+        output = $('#program_output');
+        //clear the current output
+        output.val('');
+
+        for(i = 0; i < json.length; i ++)
+        {
+           output.val(output.val() + json[i] + '\n');
+        }
+
+        output.scrollTop(output[0].scrollHeight - output.height());
+
+        setTimeout(function() { webiopi().callMacro('getLogs',[],updateLog) },5000);
     }
 
   </script>

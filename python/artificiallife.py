@@ -8,6 +8,9 @@ class lifeForm(object):
         self.Id = Id
         self.globalAggression = globalAggression
         self.globalTTL = globalTTL
+        self.lifeSeed = 0
+        self.lifeSeed2 = 0
+        self.lifeSeed3 = 0
   
     #when this function is called it gives the lifeform of the class instance its properties from the random numbers inserted into it
     def sparkLife(self, seed, seed2, seed3, startX, startY):

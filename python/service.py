@@ -23,6 +23,7 @@ is_running = False
 settings = None
 iList = None
 holder = None
+logArray = None
 
 #### WEB MACROS START HERE
 
@@ -71,7 +72,27 @@ def changeRunning(action):
 
     return json.dumps(response)
 
+#return current running logFile
+@webiopi.macro
+def getLogs():
+    global logArray
+    return json.dumps(logArray)
+
 #### WEB MACROS END HERE
+
+def logLine(message,debug=False):
+    global logArray
+    global is_running
+
+    if(debug):
+        #if debug don't put in logArray
+        webiopi.debug(message)
+    else:
+        #both print to log and logArray
+        webiopi.info(message)
+
+        if(is_running):
+            logArray.append(message)
 
 #print the number of lifeforms currently on the board
 def printLifeformNo(no):
@@ -141,6 +162,13 @@ def setup_game():
     global iList
     global holder
     global settings
+    global logArray
+
+    #clear the logArray (python2 doesn't have clear() method)
+    del logArray[:]
+
+    #reset the next id number to total at start + 1
+    settings.setValue(constants.NEXT_ID,settings.getValue(constants.NUM_LIFEFORMS_START) + 1)
 
     #obtain lifeform id list from the above function  
     iList = assignClasses(settings.getValue(constants.NUM_LIFEFORMS_START))
@@ -158,9 +186,13 @@ def setup_game():
 #### SETUP - called at webiopi startup
 def setup():
     global settings
+    global logArray
 
     #load the settings file
     settings = Settings('/home/pi/Artificial_Life/')
+
+    #setup the log array
+    logArray = []
     
     #unicorn hat setup    
     unicorn.set_layout(unicorn.AUTO)
@@ -198,6 +230,7 @@ def loop():
                 iList = holder[Id].expireEntity(iList)
                 #if the lifeform has expired then skip the loop as we dont want to continue processing an entity which is no longer on the board
                 if Id not in iList:
+                    logLine('%d has expired' % Id)
                     continue
                 #print stats of current lifeform to console
                 holder[Id].getStats()
@@ -221,13 +254,13 @@ def loop():
                     #list variable for use later is cleared
                     transfers = []
                     #print information of the collision to screen
-                    print ('Collision detected: ' + str(Id) + ' collided with ' + str(colliderScope))
+                    logLine('Collision detected: ' + str(Id) + ' collided with ' + str(colliderScope))
                     #call the randomise direction function for the entity
                     holder[Id].randomiseDirection()
 
                     #if the aggression factor is below 850 the lifeform will attempt to breed with the one it collided with
                     if holder[Id].aggressionFactor < 850:
-                        webiopi.info('breeding')
+                        logLine('Breeding %d with %d' % (Id,colliderScope))
 
                         #the breeding will attempt only if the current lifeform count is not above the population limit
                         if lifeFormTotalCount < popLimit:
@@ -247,7 +280,7 @@ def loop():
                                     #if the aggression factor is too low for the entity collided with and there is an entity at the current location its offspring wants to spawn, it will not do anything and no new entity will spawn
                                     if holder[colliderScope].aggressionFactor < 250:
                                         #print infromation and continue to next iteration of the loop
-                                        print 'Nothing killed'
+                                        logLine('Breeding failed')
                                         continue
                   
                                     #if the aggression factor is higher than the entity currently in place, the currently existing entity will be killed and replaced with the new offspring
@@ -256,12 +289,10 @@ def loop():
                                         iList = holder[colliderScopeBirthConflicter].killEntity(iList)
                                         #remove the killed entity from the position list so that it cant be collided with on the next iteration
                                         posList.remove([colliderScopeBirthConflicter, holder[colliderScopeBirthConflicter].matrixPositionX, holder[colliderScopeBirthConflicter].matrixPositionY])
-                                        #increase lifeform total by 1
-                                        lifeFormTotal += 1
-                                        #append the lifeform total to the list used by the main loop
-                                        iList.append(lifeFormTotal)
+                                        #append the lifeform to the list used by the main loop
+                                        iList.append(settings.getValue(constants.NEXT_ID))
                                         #create a dictionary containing the instance id of the new class instance for the lifeform
-                                        hUpdate = {lifeFormTotal: lifeForm(lifeFormTotal,maxAggro,maxTTL)}
+                                        hUpdate = {settings.getValue(constants.NEXT_ID): lifeForm(settings.getValue(constants.NEXT_ID),maxAggro,maxTTL)}
                                         #update the list containing all of the instance ids of the main entity class
                                         holder.update(hUpdate)
                     
@@ -271,16 +302,19 @@ def loop():
                                         transferOptions3 = [holder[Id].lifeSeed3, holder[colliderScope].lifeSeed3, genRandom()]
                     
                                         #print information to the console
-                                        print 'Conflicter killed'
+                                        logLine('%d killed to make room for %d' % (colliderScopeBirthConflicter,settings.getValue(constants.NEXT_ID)))
                     
                                         #generate new lifeform with the chances of taking the information from each lifeseed or a totally new random seed, creating them at the x and y coords determined above
-                                        generateLifeformAttribsSpark(lifeFormTotal, int(np.random.choice(transferOptions1, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions2, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions3, 1, p=[0.4, 0.4, 0.2])), posXGen, posYGen)
+                                        generateLifeformAttribsSpark(settings.getValue(constants.NEXT_ID), int(np.random.choice(transferOptions1, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions2, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions3, 1, p=[0.4, 0.4, 0.2])), posXGen, posYGen)
+
+                                        #update next id number
+                                        settings.setValue(constants.NEXT_ID,settings.getValue(constants.NEXT_ID) + 1)
                                         #break the loop as no more needs to be done
                                         break
                   
                                     #if the aggression factor of the already existing entity is higher then the current entity will be killed and no offspring produced
                                     elif holder[colliderScope].aggressionFactor < holder[colliderScopeBirthConflicter].aggressionFactor:
-                                        print 'Collider killed'
+                                        logLine('%d killed parent %d, breeding failed' % (colliderScopeBirthConflicter,colliderScope))
                                         iList = holder[colliderScope].killEntity(iList)
                                         posList.remove([colliderScope, holder[colliderScope].matrixPositionX, holder[colliderScope].matrixPositionY])
                                         #break the loop as no more needs to be done
@@ -288,10 +322,10 @@ def loop():
                 
                                 #if there is no entity in the place of the potential offspring the new entity will be created at the x and y coords determined above
                                 else:
-                                    #increas the lifeform total by 1
-                                    lifeFormTotal += 1
-                                    iList.append(lifeFormTotal)
-                                    hUpdate = {lifeFormTotal: lifeForm(lifeFormTotal,maxAggro,maxTTL)}
+                                    logLine('%d created' % settings.getValue(constants.NEXT_ID))
+                                    #add new lifeform to list
+                                    iList.append(settings.getValue(constants.NEXT_ID))
+                                    hUpdate = {settings.getValue(constants.NEXT_ID): lifeForm(settings.getValue(constants.NEXT_ID),maxAggro,maxTTL)}
                                     holder.update(hUpdate)
               
                                     #the below assigns all 3 lifeseeds with the potential to take the lifeseed from either parent (40% chance each), or whether a new random lifeseed will be inserted (20% chance), resulting in some genetic chaos to change offspring randomly
@@ -300,7 +334,10 @@ def loop():
                                     transferOptions3 = [holder[Id].lifeSeed3, holder[colliderScope].lifeSeed3, genRandom()]
                   
                                     #generate new lifeform with the chances of taking the information from each lifeseed or a totally new random seed, creating them at the x and y coords determined above
-                                    generateLifeformAttribsSpark(lifeFormTotal, int(np.random.choice(transferOptions1, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions2, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions3, 1, p=[0.4, 0.4, 0.2])), posXGen, posYGen)
+                                    generateLifeformAttribsSpark(settings.getValue(constants.NEXT_ID), int(np.random.choice(transferOptions1, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions2, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions3, 1, p=[0.4, 0.4, 0.2])), posXGen, posYGen)
+
+                                    #update the next ID number
+                                    settings.setValue(constants.NEXT_ID,settings.getValue(constants.NEXT_ID) + 1)
                                     break
             
                         #if the current amount of lifeforms on the board is at the population limit or above then do nothing
@@ -311,20 +348,20 @@ def loop():
                     elif holder[Id].aggressionFactor > 850:
                         #if the other entities aggression factor is lower it will be killed and removed from the main loops list of entities
                         if holder[colliderScope].aggressionFactor < holder[Id].aggressionFactor:
-                            print ('Other entity killed')
+                            logLine('Entity %d killed' % colliderScope)
                             iList = holder[colliderScope].killEntity(iList)
                             posList.remove([colliderScope, holder[colliderScope].matrixPositionX, holder[colliderScope].matrixPositionY])
                         #if the other entities aggression factor is higher it will be kill the current entity and it will be removed from the main loops list of entities
                         elif holder[colliderScope].aggressionFactor > holder[Id].aggressionFactor:
-                            print ('Current entity killed')
+                            logLine('Entity %d killed' % Id)
                             iList = holder[Id].killEntity(iList)
                             posList.remove([Id, holder[Id].matrixPositionX, holder[Id].matrixPositionY])
                         #if the aggression factor of both entities is identical they will reach a stalemate and simply bounce off each other
                         elif holder[colliderScope].aggressionFactor == holder[Id].aggressionFactor:
-                            print ('Neither entity killed')
+                            logLine('Neither entity killed')
                             continue
         elif not iList:
-            webiopi.info('Program done')
+            logLine('Program done')
             changeRunning('false')
         #show LEDs
         unicorn.show()
