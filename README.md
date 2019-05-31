@@ -65,3 +65,7 @@ sudo systemctl restart webiopi
 ### Running the Program
 
 Log in to the web interface on port 8000 using the username and password created in the installation step. 
+
+The main page allows you to start the program and run Artificial Life. The running status will query every so often and change if the program finishes. 
+
+The settings page allows you to tweak the run time settings. These are saved in a file and will persist between reboots. 
