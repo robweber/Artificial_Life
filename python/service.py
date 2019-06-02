@@ -173,6 +173,37 @@ def boardPositionGenerator():
     posYGen = random.randint(0, 7)
     return posXGen, posYGen
 
+#create an offspring from parent 1 and parent 2 at coords x,y
+def breed(parent1,parent2,posXGen,posYGen):
+    global iList
+    global holder
+    global settings
+
+    #get the nextId to use
+    nextId = settings.getValue(constants.NEXT_ID)
+
+    #append the lifeform to the list used by the main loop
+    iList.append(nextId)
+
+    #create a dictionary containing the instance id of the new class instance for the lifeform
+    hUpdate = {nextId: lifeForm(nextId,settings.getValue(constants.MAX_AGRESSION),settings.getValue(constants.MAX_TTL))}
+    #update the list containing all of the instance ids of the main entity class
+    holder.update(hUpdate)
+
+    #the below assigns all 3 lifeseeds with the potential to take the lifeseed from either parent (40% chance each), or whether a new random lifeseed will be inserted (20% chance), resulting in some genetic chaos to change offspring randomly
+    transferOptions1 = [holder[parent1].lifeSeed, holder[parent2].lifeSeed, genRandom()]
+    transferOptions2 = [holder[parent1].lifeSeed2, holder[parent2].lifeSeed2, genRandom()]
+    transferOptions3 = [holder[parent1].lifeSeed3, holder[parent2].lifeSeed3, genRandom()]
+    
+    #generate new lifeform with the chances of taking the information from each lifeseed or a totally new random seed, creating them at the x and y coords determined above
+    generateLifeformAttribsSpark(nextId, int(np.random.choice(transferOptions1, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions2, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions3, 1, p=[0.4, 0.4, 0.2])), posXGen, posYGen)
+
+    #update next id number
+    settings.setValue(constants.NEXT_ID,nextId + 1)
+
+    #return the id used
+    return nextId
+
 def setup_game():
     global iList
     global holder
@@ -281,16 +312,12 @@ def loop():
                         if lifeFormTotalCount < popLimit:
                             #generate 2 random numbers for x and y positions of the new entity
                             posXGen, posYGen = boardPositionGenerator()
-                            #posXGen = random.randint(1, 8)
-                            #posYGen = random.randint(1, 8)
               
                             #check for an entity at this position
                             for i in posList:
                                 colliderScopeBirthConflicter = collisionDetector(posList, posXGen, posYGen, Id)     
                                 if colliderScopeBirthConflicter:
                                     posXGen, posYGen = boardPositionGenerator()
-                                    #posXGen = random.randint(1, 8)
-                                    #posYGen = random.randint(1, 8)
                   
                                     #if the aggression factor is too low for the entity collided with and there is an entity at the current location its offspring wants to spawn, it will not do anything and no new entity will spawn
                                     if holder[colliderScope].aggressionFactor < 250:
@@ -304,27 +331,12 @@ def loop():
                                         iList = holder[colliderScopeBirthConflicter].killEntity(iList)
                                         #remove the killed entity from the position list so that it cant be collided with on the next iteration
                                         posList.remove([colliderScopeBirthConflicter, holder[colliderScopeBirthConflicter].matrixPositionX, holder[colliderScopeBirthConflicter].matrixPositionY])
-                                        #append the lifeform to the list used by the main loop
-                                        iList.append(settings.getValue(constants.NEXT_ID))
-                                        #create a dictionary containing the instance id of the new class instance for the lifeform
-                                        hUpdate = {settings.getValue(constants.NEXT_ID): lifeForm(settings.getValue(constants.NEXT_ID),maxAggro,maxTTL)}
-                                        #update the list containing all of the instance ids of the main entity class
-                                        holder.update(hUpdate)
-                    
-                                        #the below assigns all 3 lifeseeds with the potential to take the lifeseed from either parent (40% chance each), or whether a new random lifeseed will be inserted (20% chance), resulting in some genetic chaos to change offspring randomly
-                                        transferOptions1 = [holder[Id].lifeSeed, holder[colliderScope].lifeSeed, genRandom()]
-                                        transferOptions2 = [holder[Id].lifeSeed2, holder[colliderScope].lifeSeed2, genRandom()]
-                                        transferOptions3 = [holder[Id].lifeSeed3, holder[colliderScope].lifeSeed3, genRandom()]
-                    
-                                        #print information to the console
-                                        logLine('%d killed to make room for %d' % (colliderScopeBirthConflicter,settings.getValue(constants.NEXT_ID)))
-                    
-                                        #generate new lifeform with the chances of taking the information from each lifeseed or a totally new random seed, creating them at the x and y coords determined above
-                                        generateLifeformAttribsSpark(settings.getValue(constants.NEXT_ID), int(np.random.choice(transferOptions1, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions2, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions3, 1, p=[0.4, 0.4, 0.2])), posXGen, posYGen)
 
-                                        #update next id number
-                                        settings.setValue(constants.NEXT_ID,settings.getValue(constants.NEXT_ID) + 1)
-                                        #break the loop as no more needs to be done
+                                        offspringId = breed(Id,colliderScope,posXGen,posYGen)
+                                        
+                                        #print information to the console
+                                        logLine('%d killed to make room for %d' % (colliderScopeBirthConflicter,offspringId))
+
                                         break
                   
                                     #if the aggression factor of the already existing entity is higher then the current entity will be killed and no offspring produced
@@ -332,27 +344,15 @@ def loop():
                                         logLine('%d killed parent %d, breeding failed' % (colliderScopeBirthConflicter,colliderScope))
                                         iList = holder[colliderScope].killEntity(iList)
                                         posList.remove([colliderScope, holder[colliderScope].matrixPositionX, holder[colliderScope].matrixPositionY])
+
                                         #break the loop as no more needs to be done
                                         break
                 
                                 #if there is no entity in the place of the potential offspring the new entity will be created at the x and y coords determined above
                                 else:
-                                    logLine('%d created' % settings.getValue(constants.NEXT_ID))
-                                    #add new lifeform to list
-                                    iList.append(settings.getValue(constants.NEXT_ID))
-                                    hUpdate = {settings.getValue(constants.NEXT_ID): lifeForm(settings.getValue(constants.NEXT_ID),maxAggro,maxTTL)}
-                                    holder.update(hUpdate)
-              
-                                    #the below assigns all 3 lifeseeds with the potential to take the lifeseed from either parent (40% chance each), or whether a new random lifeseed will be inserted (20% chance), resulting in some genetic chaos to change offspring randomly
-                                    transferOptions1 = [holder[Id].lifeSeed, holder[colliderScope].lifeSeed, genRandom()]
-                                    transferOptions2 = [holder[Id].lifeSeed2, holder[colliderScope].lifeSeed2, genRandom()]
-                                    transferOptions3 = [holder[Id].lifeSeed3, holder[colliderScope].lifeSeed3, genRandom()]
-                  
-                                    #generate new lifeform with the chances of taking the information from each lifeseed or a totally new random seed, creating them at the x and y coords determined above
-                                    generateLifeformAttribsSpark(settings.getValue(constants.NEXT_ID), int(np.random.choice(transferOptions1, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions2, 1, p=[0.4, 0.4, 0.2])), int(np.random.choice(transferOptions3, 1, p=[0.4, 0.4, 0.2])), posXGen, posYGen)
+                                    offspringId = breed(Id,colliderScope,posXGen,posYGen)
 
-                                    #update the next ID number
-                                    settings.setValue(constants.NEXT_ID,settings.getValue(constants.NEXT_ID) + 1)
+                                    logLine("%d created" % offspringId)
                                     break
             
                         #if the current amount of lifeforms on the board is at the population limit or above then do nothing
