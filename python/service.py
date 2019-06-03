@@ -69,6 +69,7 @@ def changeRunning(action):
         setup_game() #startup the game variables here
     else:
         response['message'] = 'Stopping Artificial Life'
+        clearLEDS() #clear any lights left on
 
     return json.dumps(response)
 
@@ -384,5 +385,6 @@ def loop():
         webiopi.sleep(settings.getValue(constants.SECONDS_BETWEEN_LOOPS))
     else:
         #sleep for a bit and check again
+        unicorn.show()
         webiopi.sleep(5)
 
