@@ -85,7 +85,7 @@ def getLogs():
     if(is_running):
         life = []
         for Id in iList:
-            life.append({'id':Id,'red':holder[Id].redColor,'green':holder[Id].greenColor,'blue':holder[Id].blueColor,'ttl':holder[Id].timeToLive,'aggression':holder[Id].aggressionFactor})
+            life.append({'id':Id,'red':holder[Id].redColor,'green':holder[Id].greenColor,'blue':holder[Id].blueColor,'ttl':holder[Id].timeToLive,'aggression':holder[Id].aggressionFactor,"life_left":holder[Id].timeToLiveCount})
         result['life'] = life
     else:
         result['life'] = []

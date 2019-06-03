@@ -92,7 +92,8 @@
         for(i = 0; i < json['life'].length; i ++)
         {
             life = json['life'][i];
-            table.append('<tr style="background-color:#' + rgbToHex(life['red']) + rgbToHex(life['green']) + rgbToHex(life['blue']) + '"><td>' + life['id'] + '</td><td>' + life['aggression'] + '</td><td>' + life['ttl'] + '</td></tr>');
+            hexValue = rgbToHex(life['red']) + rgbToHex(life['green']) + rgbToHex(life['blue']);
+            table.append('<tr style="background-color:#' + hexValue + '"><td>' + life['id'] + '</td><td>' + life['aggression'] + '</td><td>' + life['ttl'] + '</td><td>' + life['life_left'] + '</td></tr>');
         }
 
         setTimeout(function() { webiopi().callMacro('getLogs',[],updateLog) },5000);
@@ -148,6 +149,7 @@
                         <th scope="col">ID</th>
                         <th scope="col">Aggression</th>
                         <th scope="col">TTL</th>
+                        <th scope="col">Life Left</th>
                     </tr>
                 </thead>
                 <tbody>
