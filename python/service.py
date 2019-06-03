@@ -305,8 +305,17 @@ def loop():
                     #call the randomise direction function for the entity
                     holder[Id].randomiseDirection()
 
-                    #if the aggression factor is below 850 the lifeform will attempt to breed with the one it collided with
-                    if holder[Id].aggressionFactor < 850:
+                    #both lifeforms examined, if under 850 they breed, if over 850 they fight, if combo there is a 50/50 chance
+                    breedOrFight = True #assume both > 850 by default
+                    if(holder[Id].aggressionFactor > 850 and holder[colliderScope].aggressionFactor > 850):
+                        #if both are over 850, they must fight
+                        breedOrFight = False
+                    elif((holder[Id].aggressionFactor > 850 and holder[colliderScope].aggressionFactor < 850) or (holder[Id].aggressionFactor < 850 and holder[colliderScope] > 850)):
+                        #if only one is aggressive there is a 50/50 chance
+                        breedOrFight = random.randint(1,100) <= 50
+
+                    #if both are > 850 or 50/50 is true
+                    if breedOrFight:
                         logLine('Breeding %d with %d' % (Id,colliderScope))
 
                         #the breeding will attempt only if the current lifeform count is not above the population limit
@@ -360,8 +369,8 @@ def loop():
                         elif lifeFormTotalCount >= popLimit:
                             continue
 
-                    #if the entities aggression factor is above 850 it will attempt to kill the entity it has collided with instead of breed
-                    elif holder[Id].aggressionFactor > 850:
+                    #if both entities are  < 850 or 50/50 ends up false
+                    elif not breedOrFight:
                         #if the other entities aggression factor is lower it will be killed and removed from the main loops list of entities
                         if holder[colliderScope].aggressionFactor < holder[Id].aggressionFactor:
                             logLine('Entity %d killed' % colliderScope)
