@@ -74,7 +74,7 @@ The settings page allows you to tweak the run time settings. These are saved in 
 
 One of the fun features of the original python script was the ```thanosSnap``` function. As the name implies this randomly killed 50% of the lifeforms on the board. 
 
-If you can find the *secret* ```infinity.html``` page you can perform the Snap yourself. Watch as half the board is decimated. Because of how WebIOPi works, you can also integrate the Snap into other projects using the WebIOPi REST API. A post call to the URL ```/macros/thanosSnap/``` will do the same thing as using the website.
+If you can find the *secret* ```infinity.html``` page you can perform the Snap yourself. Watch as half the board is decimated. Because of how WebIOPi works, you can also integrate the Snap into other projects using the (WebIOPi REST API)[https://webiopi.trouch.com/RESTAPI.html]. A post call to the URL ```/macros/thanosSnap/``` will do the same thing as using the website.
 
 ### Changes From Original
 
