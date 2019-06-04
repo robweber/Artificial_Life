@@ -19,6 +19,22 @@
   
   <!-- webiopi -->
   <script type="text/javascript" src="/webiopi.js"></script>
+  
+  <script type="text/javascript">
+    webiopi().ready(function(){
+      webiopi().callMacro('checkRunning',[],updateProgramStatus);
+    });
+    
+    function updateSnapButton(macro,args,response){
+      json = jQuery.parseJSON(response)
+
+      if(json['is_running']){
+          //enable the button
+          $("#btnSnap").attr("disabled", false);
+      }
+      
+    }
+  </script>
 </head>
 
 <body>
@@ -38,8 +54,8 @@
           <li class="nav-item">
             <a class="nav-link" href="settings.html">Settings</a>
           </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="about.html">About <span class="sr-only">(current)</span></a>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
           </li>
         </ul>
       </div>
@@ -48,18 +64,14 @@
 
   <!-- Page Content -->
   <main role="main">
+    <p id="alert_area" class="alert alert-success text-center" style="display:none"></div>
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
-          <h1 class="mt-5">About</h1>
-          <p class="lead">Artificial Life is an artificial life simulation project originally published on <a href="https://314reactor.com/2017/10/16/artificial-life-project/">314reactor.com</a>. It uses a Raspberry Pi computer and a Unicorn Pi Hat to simulate artificial lifeforms. The following open source projects were used as part of this project: </p>
-          <ul>
-        <li>WebIOPi (Thortex version)- <a href="https://github.com/thortex/rpi3-webiopi">https://github.com/thortex/rpi3-webiopi</a></li>
-        <li><i>Bare</i> Bootstrap Template - <a href="https://startbootstrap.com/templates/bare/">https://startbootstrap.com/templates/bare/</a>
-            <li>Bootstrap - <a href="https://getbootstrap.com/">https://getbootstrap.com/</a></li>
-            <li>jQuery - <a href="https://jquery.com/">https://jquery.com/</a></li>
-            <li>Infinity Gauntlet Gif - <a href="https://giphy.com/stickers/cartoon-marvel-26VjwfLk7CRslWHSWI">Giphy - Artist JenChibi</li>
-          </ul>
+          <h1 class="mt-5">You've collected the stones.......</h1>
+          <p class="lead">Like the Mad Titan use the power of the Infinity Gauntlet to decimate half the population of the board.</p>
+          <div align="center"><img src="img/gauntlet.gif" /></div>
+          <input type="button" class="btn btn-primary" value="SNAP!" id="btnSnap" disabled />
         </div>
       </div>
     </div>
