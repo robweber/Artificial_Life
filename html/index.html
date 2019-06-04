@@ -23,6 +23,7 @@
   
   <script type="text/javascript">
     var is_running = true;
+    var update_time = 5000; //by default update every 5 seconds
 
     webiopi().ready(function(){
         webiopi().callMacro('checkRunning',[],updateRunning);
@@ -43,6 +44,9 @@
         $('#action_button').val("Stop")
         $('#action_button').removeClass('btn-primary')
         $('#action_button').addClass('btn-danger')
+
+        //update more often
+        update_time = 2000;
       }
       else
       {
@@ -50,6 +54,9 @@
         $('#action_button').val("Start")
         $('#action_button').addClass('btn-primary')
         $('#action_button').removeClass('btn-danger')
+
+        //reset update time
+        update_time = 5000;
 
       }
 
@@ -96,7 +103,7 @@
             table.append('<tr style="background-color:#' + hexValue + '"><td>' + life['id'] + '</td><td>' + life['aggression'] + '</td><td>' + life['ttl'] + '</td><td>' + life['life_left'] + '</td></tr>');
         }
 
-        setTimeout(function() { webiopi().callMacro('getLogs',[],updateLog) },5000);
+        setTimeout(function() { webiopi().callMacro('getLogs',[],updateLog) },update_time);
     }
 
   </script>
