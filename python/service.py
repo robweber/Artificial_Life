@@ -94,6 +94,25 @@ def getLogs():
     result['logs'] = logArray
     return json.dumps(result)
 
+@webiopi.macro
+def thanosSnap():
+    global iList
+    global holder
+    global is_running
+
+    result = {'message':'Perfectly balanced, as all things should be'}
+
+    if(is_running):
+        logLine('Thanos decimates your universe, you are in the endgame now')
+        #loop for 50% of all existing enties choosing at random to eliminate
+        for x in range(len(iList)/2):
+            vanished = random.choice(iList)
+            iList = holder[vanished].fadeEntity(iList)
+    else:
+        result['message'] = 'Program must be running'
+
+    return json.dumps(result)
+
 #### WEB MACROS END HERE
 
 def logLine(message,debug=False):

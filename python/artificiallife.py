@@ -1,4 +1,5 @@
 import random
+import unicornhat as unicorn
 
 #the main class that handles each lifeforms initialisation, movement, colour, expiry and statistics
 class lifeForm(object):

@@ -16,13 +16,14 @@
   <!-- Bootstrap core JavaScript -->
   <script src="js/jquery-3.4.1.slim.min.js"></script>
   <script src="js/boostrap.4.3.1.bundle.min.js"></script>
+  <script src="js/custom.js"></script>
   
   <!-- webiopi -->
   <script type="text/javascript" src="/webiopi.js"></script>
   
   <script type="text/javascript">
     webiopi().ready(function(){
-      webiopi().callMacro('checkRunning',[],updateProgramStatus);
+      webiopi().callMacro('checkRunning',[],updateSnapButton);
     });
     
     function updateSnapButton(macro,args,response){
@@ -33,6 +34,10 @@
           $("#btnSnap").attr("disabled", false);
       }
       
+    }
+
+    function doSnap(){
+      webiopi().callMacro('thanosSnap',[],showNotification);
     }
   </script>
 </head>
@@ -69,9 +74,11 @@
       <div class="row">
         <div class="col-lg-12">
           <h1 class="mt-5">You've collected the stones.......</h1>
-          <p class="lead">Like the Mad Titan use the power of the Infinity Gauntlet to decimate half the population of the board.</p>
-          <div align="center"><img src="img/gauntlet.gif" /></div>
-          <input type="button" class="btn btn-primary" value="SNAP!" id="btnSnap" disabled />
+          <p class="lead">Like the Mad Titan, use the power of the Infinity Gauntlet to decimate half the population of the board.</p>
+          <div align="center">
+            <img src="img/gauntlet.gif" /><br>
+            <input type="button" class="btn btn-primary px-4 py-4" value="SNAP!" id="btnSnap" onClick="doSnap()" disabled />
+          </div>
         </div>
       </div>
     </div>
