@@ -35,8 +35,20 @@
       }
      
       webiopi().callMacro('getSettings',[],loadSettings);
-      webiopi().callMacro('checkRunning',[],updateProgramStatus);
+      webiopi().callMacro('checkRunning',[],updateRunning);
     });
+
+    function updateRunning(macro,args,response){
+      json = jQuery.parseJSON(response)
+
+      updateProgramStatus(macro,args,response);
+
+      if(!json['is_running'])
+      {
+          $("#btnSave").attr("disabled", false);
+      }
+
+    }
 
     function saveForm(){
       //get the settings
@@ -111,7 +123,7 @@
         <div class="col-md-4">maximum aggression for any life form</div>
       </div>
       <div class="row mt-4 mb-4">
-        <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary" onClick="saveForm()" value="Apply" /></div>
+        <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary" onClick="saveForm()" value="Apply" id="btnSave" disabled/></div>
       </div>
     </div>  
   </main>
