@@ -329,7 +329,7 @@ def loop():
                     if(holder[Id].aggressionFactor > 850 and holder[colliderScope].aggressionFactor > 850):
                         #if both are over 850, they must fight
                         breedOrFight = False
-                    elif((holder[Id].aggressionFactor > 850 and holder[colliderScope].aggressionFactor < 850) or (holder[Id].aggressionFactor < 850 and holder[colliderScope] > 850)):
+                    elif((holder[Id].aggressionFactor > 850 and holder[colliderScope].aggressionFactor <= 850) or (holder[Id].aggressionFactor <= 850 and holder[colliderScope] > 850)):
                         #if only one is aggressive there is a 50/50 chance
                         breedOrFight = random.randint(1,100) <= 50
 
