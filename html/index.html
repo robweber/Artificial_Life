@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Artificial Life</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.4.3.1.min.css" rel="stylesheet">
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/boostrap.4.3.1.bundle.min.js"></script>
+  <script src="js/custom.js"></script>
+  
+  <!-- webiopi -->
+  <script type="text/javascript" src="/webiopi.js"></script>
+  
+  <script type="text/javascript">
+    var is_running = true;
+    var update_time = 5000; //by default update every 5 seconds
+
+    webiopi().ready(function(){
+        webiopi().callMacro('checkRunning',[],updateRunning);
+        webiopi().callMacro('getLogs',[],updateLog);
+    })
+
+    function updateRunning(macro,args,response)
+    {
+      json = jQuery.parseJSON(response)
+
+      is_running = json['is_running']
+
+      updateProgramStatus(macro,args,response);
+      
+      if(is_running)
+      { 
+        //change start to stop
+        $('#action_button').val("Stop")
+        $('#action_button').removeClass('btn-primary')
+        $('#action_button').addClass('btn-danger')
+
+        //update more often
+        update_time = 2000;
+      }
+      else
+      {
+        //change to start
+        $('#action_button').val("Start")
+        $('#action_button').addClass('btn-primary')
+        $('#action_button').removeClass('btn-danger')
+
+        //reset update time
+        update_time = 5000;
+
+      }
+
+      setTimeout(function() {webiopi().callMacro('checkRunning',[],updateRunning)},5000)
+
+    }
+
+    function runAction(){
+      if(is_running)
+      {
+        if(confirm('Are you sure, this will stop Artificial Life from running?'))
+        {
+          webiopi().callMacro('changeRunning',false,updateRunning)
+        }
+      }
+      else
+      {
+          webiopi().callMacro('changeRunning',true,updateRunning)
+      }
+    }
+
+    function updateLog(macro,args,response){
+        json = jQuery.parseJSON(response);
+
+        output = $('#program_output');
+        //clear the current output
+        output.val('');
+
+        for(i = 0; i < json['logs'].length; i ++)
+        {
+           output.val(output.val() + json['logs'][i] + '\n');
+        }
+
+        output.scrollTop(output[0].scrollHeight - output.height());
+
+        //clear the table
+        table = $('#active_lifeforms tbody');
+        table.html('');
+
+        for(i = 0; i < json['life'].length; i ++)
+        {
+            life = json['life'][i];
+            hexValue = rgbToHex(life['red']) + rgbToHex(life['green']) + rgbToHex(life['blue']);
+            table.append('<tr style="background-color:#' + hexValue + '"><td>' + life['id'] + '</td><td>' + life['aggression'] + '</td><td>' + life['ttl'] + '</td><td>' + life['life_left'] + '</td></tr>');
+        }
+
+        setTimeout(function() { webiopi().callMacro('getLogs',[],updateLog) },update_time);
+    }
+
+  </script>
+  
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Artificial Life</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="settings.html">Settings</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <main role="main">
+    <p id="alert_area" class="alert alert-success text-center" style="display:none"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 text-right"><h5 class="mt-5">Program is <span class="" id="is_running"></span></h5></div>
+      </div>
+      <div class="row m-4">
+        <div class="col-lg-12 text-center"><input type="button" class="btn btn-primary py-4 px-5" id="action_button" onClick="runAction()" value="Start" /></div>
+      </div>
+      <div class="row m-3">
+        <div class="col-md-6 border border-secondary py-2">
+            <textarea class="form-control" rows="12" readonly id="program_output" >This is where some output from the program will go - maybe</textarea>
+        </div>
+        <div class="col-md-6">
+            <table class="table" id="active_lifeforms">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Aggression</th>
+                        <th scope="col">TTL</th>
+                        <th scope="col">Life Left</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </div>       
+  </main>
+</body>
+
+</html>
