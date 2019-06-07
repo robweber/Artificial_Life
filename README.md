@@ -43,7 +43,6 @@ sudo systemctl restart webiopi
 #clone repo
 https://github.com/robweber/Artificial_Life.git
 cd Artificial_Life
-git checkout webiopi
 
 #install dependencies
 sudo pip install -r requirements.txt
